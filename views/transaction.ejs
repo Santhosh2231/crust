@@ -12,13 +12,19 @@
             padding : 20px 0px 20px 0px;
             background-color: #D1C4E9;
         }
+        .jumbotron{
+            background: rgb(2,0,36);
+            background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,0,136,1) 35%, rgba(0,212,255,1) 100%); 
+            height: 150px;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
     <div style="background-color: rgb(132, 57, 203);">
         <header class="jumbotron jumbotron-fluid ">
             <div class="container text-white">
-                <div class="row row-header" style=" padding: 50px 5px 12px 5px;">
+                <div class="row row-header" style=" padding: 20px 5px 12px 5px;">
                     <div class="col-12 col-sm-6">
                         <h1>DecenToken</h1>
                         <p>A Polygon + Crust webapp that lets you mint a IPFS asset stored in crust decentralized storage.</p>   </div>
@@ -26,35 +32,22 @@
             </div>
         </header>
     </div>
-
-    <div class="container col-12 col-sm-5" style="margin-top: 40px; margin-bottom: 10px;">
-        <div class="card  col-12 justify-content-center" style="width: 40rem;">
-            <form action="upload" method="post" enctype="multipart/form-data">
-            <div class="card-header text-center bg-success text-white ">
-                <h1 class="">✅ File Uploaded!! </h1>
-            </div>
+    <div class="container">
+       
+    
+        <div class="card container col-12 col-sm-5" style="margin-top: 10px; margin-bottom: 10px;">
             <div class="card-body">
-                <p><b>Name: </b> <%= fileName %> </p>
-                <p> <b>Link:   </b><a href="https://ipfs.io/ipfs/<%= fileHash %>"><%= fileHash %></a> </p> 
-                <p> <b>File Size: </b> <%= size %> bytes</p>
-                
-
-<!--                 
-                <label>File Name :</label>
-                <input type="text" class=" col justify-content-between" name="fileName"><br>
-                <br>
-                <label>Upload File : </label>
-                <input type="file" class="col justify-content-between" name="file"><br>
-                <br>
-                <input type="submit" value="submit"> -->
+               <p class="1">✅  Place storage order success!</p>
+               <p class="1">✅  Transaction Successful!!</p>
+               <p class="1">Thanks to Crust Storage</p>
             </div>
-            </form>
         </div>
     </div>
 
+    
 
 
-
+    
 <footer class="footer fixed-bottom">
     <div class="container">
     <div class="row justify-content-center">             
@@ -67,6 +60,5 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
 </body>
 </html>

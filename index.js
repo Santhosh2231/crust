@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
   console.log("SERVER is listening");
 });
+
 app.post("/upload", (req, res) => {
   const file = req.files.file;
   const fileName = req.body.fileName;
@@ -60,6 +61,12 @@ app.post("/upload", (req, res) => {
     res.render("upload", { fileName, fileHash, size });
   });
 });
+
+app.post("/transaction", (req, res) => {
+
+    res.render("transaction");
+});
+
 
 const addFile = async (file_name, file_path) => {
   const fileBuffer = fs.readFileSync(file_path);

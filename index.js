@@ -13,6 +13,21 @@
 // }
 
 // addFile();
+// import { ApiPromise, WsProvider } from "@polkadot/api";
+// import { typesBundleForPolkadot, crustTypes } from "@crustio/type-definitions";
+// import { Keyring } from "@polkadot/keyring";
+// import { KeyringPair } from "@polkadot/keyring/types";
+
+const polkadot = require("@polkadot/api");
+const crustio = require("@crustio/type-definitions");
+// const keyring = require("@polkadot/keyring");
+const keyringPair = require("@polkadot/keyring/pair");
+
+const { waitReady } = require("@polkadot/wasm-crypto");
+const { Keyring } = require("@polkadot/api");
+
+const crustChainEndpoint = "wss://rpc.crust.network";
+const Wsprovider = new polkadot.WsProvider(crustChainEndpoint);
 
 const ipfsClient = require("ipfs-http-client");
 const express = require("express");
@@ -20,6 +35,60 @@ const bodyparser = require("body-parser");
 const fileupload = require("express-fileupload");
 const fs = require("fs");
 const {exec} = require("child_process");
+
+
+
+let status1 = false;
+async function placeStorageOrder() {
+  await waitReady();
+  const api = new polkadot.ApiPromise({
+    provider: Wsprovider,
+    typesBundle: crustio.typesBundleForPolkadot,
+  });
+  await api.isReady;
+  // 1. Construct place-storage-order tx
+  const fileCid = "QmVfywwr9UnAJ2hnvgZ5MQUjuJUUX4aZQnVvsRCoBBWBAH"; // IPFS CID, take `Qm123` as example
+  const fileSize = 2 * 1024*1024 ; // Let's say 2 gb(in byte)
+  const tips = 0;
+  const memo = "";
+  const tx = api.tx.market.placeStorageOrder(fileCid, fileSize, tips, memo);
+
+  const keyring = new Keyring({ type: "sr25519" });
+  console.log(keyring);
+  const krp = keyring.addFromUri(
+    "subway exact priority help mother knee visit harvest slab unknown elegant hand"
+  );
+  console.log(krp);
+
+  await api.isReadyOrError;
+  return new Promise((resolve, reject) => {
+    tx.signAndSend(krp, ({ events = [], status }) => {
+      console.log(`💸  Tx status: ${status.type}, nonce: ${tx.nonce}`);
+
+
+      if (status.isInBlock) {
+        events.forEach(({ event: { method, section } }) => {
+          if (method === "ExtrinsicSuccess") {
+            console.log(`✅  Place storage order success!`);
+            res.render("transaction");
+            status1 = true;
+            resolve(true);
+          }
+        });
+      } else {
+        console.log("Error");
+      }
+    }).catch((e) => {
+      reject(e);
+    });
+  });
+
+  // 3. Send transaction
+}
+
+
+
+
 
 console.log(ipfsClient);
 const ipfs = ipfsClient.create({
@@ -60,21 +129,20 @@ app.post("/upload", (req, res) => {
       }
     });
     res.render("upload", { fileName, fileHash, size });
-  });
+  }); 
 });
 
 app.post("/transaction", (req, res) => {
-    exec("node crust.js", (error,stdout,stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    res.render("transaction");
-    })
+  
+  const order = placeStorageOrder();
+  console.log(order);
+
+  if (status1){
+    //Pass
+  }
+  else{
+    console.log("Error");
+  }
     
 });
 
@@ -93,6 +161,7 @@ const addFile = async (file_name, file_path) => {
 };
 
 const ethers = require("ethers");
+const res = require("express/lib/response");
 
 async function addFileAuth(file_name, file_path) {
   const pair = ethers.Wallet.createRandom();

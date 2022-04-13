@@ -19,6 +19,7 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const fileupload = require("express-fileupload");
 const fs = require("fs");
+const {exec} = require("child_process");
 
 console.log(ipfsClient);
 const ipfs = ipfsClient.create({
@@ -63,8 +64,18 @@ app.post("/upload", (req, res) => {
 });
 
 app.post("/transaction", (req, res) => {
-
+    exec("node crust.js", (error,stdout,stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
     res.render("transaction");
+    })
+    
 });
 
 
